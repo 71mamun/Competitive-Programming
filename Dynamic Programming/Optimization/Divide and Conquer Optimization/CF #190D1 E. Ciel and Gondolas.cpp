@@ -2,17 +2,20 @@
 #include <algorithm>
 #include <cassert>
 using namespace std;
-#define LM 4007
+#define LM 4002
 int n,k,cost[LM][LM];
 
 int mem[2][LM];
-int final_cost[LM][LM];
+
+int get_cost(int i,int j){
+    return cost[j][j]+cost[i][i]-cost[i][j]-cost[j][i];
+}
 
 int cal_mid_opt(int turn,int mid,int l_opt,int r_opt) {
     int ret;
     mem[turn][mid] = 1e9;
     for(int l=l_opt; l<=min(r_opt,mid); ++l) {
-        int price = mem[turn^1][l]+final_cost[l][mid];
+        int price = mem[turn^1][l]+get_cost(l,mid);
         if(mem[turn][mid]>price) {
             mem[turn][mid] = price;
             ret = l;
@@ -59,14 +62,6 @@ int main() {
     }
 
     mem[0][0] = 0;
-
-    for(int i=0;i<=n;++i){
-        for(int j=i;j<=n;++j){
-            final_cost[i][j] = final_cost[j][i] =
-            cost[j][j]+cost[i][i]-
-            cost[i][j]-cost[j][i];
-        }
-    }
 
     int turn = 1;
     for(int i=1; i<=k; ++i) {
